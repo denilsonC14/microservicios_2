@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-publicaciones
+  labels:
+    app: ms-publicaciones
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ms-publicaciones
+  template:
+    metadata:
+      labels:
+        app: ms-publicaciones
+    spec:
+      containers:
+      - name: ms-publicaciones
+        image: ms-publicaciones:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://database-service:5432/publicaciones_db"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "root"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: ""
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: "create-drop"
+        - name: SPRING_JPA_DATABASE_PLATFORM
+          value: "org.hibernate.dialect.PostgreSQLDialect"
+        - name: SPRING_RABBITMQ_HOST
+          value: "rabbitmq-service"
+        - name: SPRING_RABBITMQ_PORT
+          value: "5672"
+        - name: SPRING_RABBITMQ_USERNAME
+          value: "admin"
+        - name: SPRING_RABBITMQ_PASSWORD
+          value: "admin"
+        - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+          value: "http://eureka-server-service:8761/eureka/"
+        imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-publicaciones-service
+spec:
+  selector:
+    app: ms-publicaciones
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

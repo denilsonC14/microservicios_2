@@ -1,5 +1,6 @@
 server:
-    port: 8000
+  port: 8000
+
 spring:
   application:
     name: API-GATEWAY
@@ -12,6 +13,12 @@ spring:
               enabled: true
               lower-case-service-id: true
           routes:
+            - id: authservice
+              uri: lb://SERVICIO-AUTENTICACION
+              predicates:
+                - Path=/api/v1/api/auth/**
+              filters:
+                - StripPrefix=2
             - id: ms-publicaciones-autor
               uri: lb://SERVICIO-PUBLICACIONES
               predicates:
@@ -30,7 +37,7 @@ spring:
                 - Path=/api/v1/publicaciones/libro/**
               filters:
                 - StripPrefix=2
-            - id: ms-catalogo-catalogo
+            - id: ms-catalogo
               uri: lb://SERVICIO-CATALOGO
               predicates:
                 - Path=/api/v1/catalogo/**
@@ -42,34 +49,25 @@ spring:
                 - Path=/api/v1/notificaciones/**
               filters:
                 - StripPrefix=2
-            - id: sincronizacion
-              uri: lb://SERVICIO-SINCRONIZACIONES
-              predicates:
-                - Path=/api/v1/**
-              filters:
-                - StripPrefix=2
-            - id: auth-login
-              uri: lb://authservice
-              predicates:
-                - Path=/api/auth/login
-              filters:
-                - name: RemoveRequestHeader
-                  args:
-                    name: Authorization
+
+jwt:
+  secret: u6rckmOPVwT9OuoWZf9lZtabfM6TTRGTYiS6OQ4Nkb8= # ej. generado con `openssl rand -base64 32`
+  expirationMs: 3600000 # 1 hora en ms
+
 eureka:
   client:
     serviceUrl:
-        defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
+
 management:
   endpoints:
     web:
       exposure:
-          include: '*'
+        include: '*'
   endpoint:
     health:
       show-details: always
-

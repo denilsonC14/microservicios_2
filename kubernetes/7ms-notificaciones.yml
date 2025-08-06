@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-notificaciones
+  labels:
+    app: ms-notificaciones
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ms-notificaciones
+  template:
+    metadata:
+      labels:
+        app: ms-notificaciones
+    spec:
+      containers:
+      - name: ms-notificaciones
+        image: ms-notificaciones:latest
+        ports:
+        - containerPort: 8084
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://database-service:5432/notificaciones_db"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "root"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: ""
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: "create-drop"
+        - name: SPRING_JPA_DATABASE_PLATFORM
+          value: "org.hibernate.dialect.PostgreSQLDialect"
+        - name: SPRING_RABBITMQ_HOST
+          value: "rabbitmq-service"
+        - name: SPRING_RABBITMQ_PORT
+          value: "5672"
+        - name: SPRING_RABBITMQ_USERNAME
+          value: "admin"
+        - name: SPRING_RABBITMQ_PASSWORD
+          value: "admin"
+        - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+          value: "http://eureka-server-service:8761/eureka/"
+        imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-notificaciones-service
+spec:
+  selector:
+    app: ms-notificaciones
+  ports:
+    - protocol: TCP
+      port: 8084
+      targetPort: 8084
+  type: ClusterIP

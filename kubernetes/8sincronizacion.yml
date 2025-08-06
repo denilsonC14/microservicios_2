@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sincronizacion
+  labels:
+    app: sincronizacion
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sincronizacion
+  template:
+    metadata:
+      labels:
+        app: sincronizacion
+    spec:
+      containers:
+      - name: sincronizacion
+        image: sincronizacion:latest
+        ports:
+        - containerPort: 8085
+        env:
+        - name: SPRING_RABBITMQ_HOST
+          value: "rabbitmq-service"
+        - name: SPRING_RABBITMQ_PORT
+          value: "5672"
+        - name: SPRING_RABBITMQ_USERNAME
+          value: "admin"
+        - name: SPRING_RABBITMQ_PASSWORD
+          value: "admin"
+        - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+          value: "http://eureka-server-service:8761/eureka/"
+        imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sincronizacion-service
+spec:
+  selector:
+    app: sincronizacion
+  ports:
+    - protocol: TCP
+      port: 8085
+      targetPort: 8085
+  type: ClusterIP

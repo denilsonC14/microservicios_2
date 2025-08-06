@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-api-gateway
+  labels:
+    app: ms-api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-api-gateway
+  template:
+    metadata:
+      labels:
+        app: ms-api-gateway
+    spec:
+      containers:
+      - name: ms-api-gateway
+        image: ms-api-gateway:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: SPRING_CLOUD_GATEWAY_ROUTES_0_ID
+          value: "publicaciones-service"
+        - name: SPRING_CLOUD_GATEWAY_ROUTES_0_URI
+          value: "http://ms-publicaciones-service:8080"
+        - name: SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0
+          value: "Path=/api/publicaciones/**"
+        - name: SPRING_CLOUD_GATEWAY_ROUTES_1_ID
+          value: "auth-service"
+        - name: SPRING_CLOUD_GATEWAY_ROUTES_1_URI
+          value: "http://authservice-service:8086"
+        - name: SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0
+          value: "Path=/api/auth/**"
+        - name: JWT_SECRET
+          value: "u6rckmOPVwT9OuoWZf9lZtabfM6TTRGTYiS6OQ4Nkb8="
+        - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+          value: "http://eureka-server-service:8761/eureka/"
+        imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway-service
+spec:
+  selector:
+    app: ms-api-gateway
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: 30080
+  type: NodePort

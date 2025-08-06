@@ -10,17 +10,7 @@
         <module name="api-gateway" />
         <module name="ms-eureka-server" />
         <module name="ms-api-gateway" />
-      </profile>
-      <profile name="Annotation profile for microservicios" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
-        </processorPath>
-        <module name="ms-notificaciones" />
-        <module name="sincronizacion" />
-        <module name="ms-catalogo" />
+        <module name="authservice" />
       </profile>
       <profile name="Annotation profile for ms-publicaciones" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -31,14 +21,16 @@
         </processorPath>
         <module name="ms-publicaciones" />
       </profile>
-      <profile name="Annotation profile for authservice" enabled="true">
+      <profile name="Annotation profile for microservicios" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
         </processorPath>
-        <module name="authservice" />
+        <module name="ms-notificaciones" />
+        <module name="sincronizacion" />
       </profile>
     </annotationProcessing>
   </component>
